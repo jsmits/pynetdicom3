@@ -1114,6 +1114,13 @@ class Association(threading.Thread):
         # Get the responses from the peer
         ii = 1
         while True:
+            # Can't get responses from peer without an Association
+            if not self.is_established:
+                self.abort()
+                raise RuntimeError(
+                    "The association with a peer SCP has been lost "
+                    "after sending a C-FIND request")
+
             # Wait for C-FIND response
             rsp, _ = self.dimse.receive_msg(wait=True)
 
@@ -1339,6 +1346,13 @@ class Association(threading.Thread):
         # Get the responses from peer
         operation_no = 1
         while True:
+            # Can't get responses from peer without an Association
+            if not self.is_established:
+                self.abort()
+                raise RuntimeError(
+                    "The association with a peer SCP has been lost "
+                    "after sending a C-MOVE request")
+
             rsp, context_id = self.dimse.receive_msg(wait=True)
 
             # If nothing received from the peer, try again
